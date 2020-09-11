@@ -1,5 +1,5 @@
 import React from "react"
-import { Text, View } from "react-native"
+import { Text, ScrollView } from "react-native"
 
 import peopleJson from '../../people.json'
 import PeopleList from '../components/PeopleList'
@@ -30,10 +30,10 @@ export default class PeoplePage extends React.Component {
 
   render() {
     return (
-      <View>
+      <ScrollView>
         <Text> Notes Timeline! </Text>
         <PeopleList people={this.state.people} />
-      </View>
+      </ScrollView>
     )
   }
 }
