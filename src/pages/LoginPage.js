@@ -8,7 +8,7 @@ import {
   Image,
   KeyboardAvoidingView,
   ActivityIndicator,
-  Alert
+  Alert, AsyncStorage
 } from "react-native";
 import firebase from "firebase"
 
@@ -27,28 +27,34 @@ export default class LoginPage extends React.Component {
   }
 
   componentDidMount() {
+    AsyncStorage.getItem('NT::UserData').then(userDataJson => {
+      let userData = JSON.parse(userDataJson);
+      if (userData != null) {
+        this.access(userData)
+      }
+    })
     var firebaseConfig = {
-      apiKey: "",
-      authDomain: "",
-      databaseURL: "",
-      projectId: "",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: "",
-      measurementId: "",
+      apiKey: "AIzaSyA1AhIvgXypkV92YpCoH-EXgii5Eh022pI",
+      authDomain: "rn-notes-timeline.firebaseapp.com",
+      databaseURL: "https://rn-notes-timeline.firebaseio.com",
+      projectId: "rn-notes-timeline",
+      storageBucket: "rn-notes-timeline.appspot.com",
+      messagingSenderId: "61893764971",
+      appId: "1:61893764971:web:00e199d62dc55c4d438e2e",
+      measurementId: "G-LKD79ZN05F",
     };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig)
     // firebase.analytics();
   }
 
   onChangeHandler(field, value) {
-    this.setState({ [field]: value });
+    this.setState({ [field]: value })
   }
 
-  access() {
-    this.setState({ isLoading: false });
-    this.props.navigation.replace("People");
+  access(userData) {
+    this.setState({ isLoading: false })
+    AsyncStorage.setItem('NT::UserData', JSON.stringify(userData))
+    this.props.navigation.replace("People")
   }
 
   // getMsgByErrorCode(errorCode) {
@@ -96,9 +102,10 @@ export default class LoginPage extends React.Component {
       [{
         text: "Cancelar",
         style: "cancel"
-      },{
-          text: "Cadastrar",
-          onPress: () => {this.register()}
+      },
+      {
+        text: "Cadastrar",
+        onPress: () => {this.register()}
       }]
     )
   }
@@ -109,7 +116,7 @@ export default class LoginPage extends React.Component {
     return firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(user => { this.access() })
+      .then(user => { this.access(user) })
       .catch(error => {
         this.setState({
           message: this.getMessageByErrorCode(error.code),
@@ -124,9 +131,7 @@ export default class LoginPage extends React.Component {
     return firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then((user) => {
-        this.access();
-      })
+      .then((user) => { this.access(user) })
       .catch((error) => {
         this.setState({
           message: this.getMessageByErrorCode(error.code),

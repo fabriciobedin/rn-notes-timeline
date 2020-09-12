@@ -3,7 +3,6 @@ import { Text, ScrollView, SafeAreaView, StyleSheet } from "react-native"
 import { FloatingAction } from 'react-native-floating-action'
 import * as firebase from 'firebase';
 
-import peopleJson from '../../people.json'
 import PeopleList from '../components/PeopleList'
 
 export default class PeoplePage extends React.Component {
@@ -16,18 +15,27 @@ export default class PeoplePage extends React.Component {
     }
   }
 
+  componentDidMount() {
+    var db = firebase.database();
+    db.ref('/usr/people').on('value', querySnapshot => { 
+      let data = []
+      querySnapshot.forEach(child => { 
+        data.push({
+          id: child.val().id,
+          nome: child.val().desc
+        })
+      })
+      console.log(data)
+      this.setState({ people: data})
+    })
+  }
+
   addPerson() {
     var db = firebase.database();
     db.ref('/usr/people')
       .push({ desc: 'Alguem' })
       .then(() => { console.log('Inserido') })
       .catch(() => {console.log('Erro ao registrar')})
-  }
-
-  componentDidMount() {
-    this.setState({
-      people: peopleJson
-    })
   }
 
   renderList() {
@@ -48,7 +56,6 @@ export default class PeoplePage extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
-          <Text> Notes Timeline! </Text>
           <PeopleList people={this.state.people} />
         </ScrollView>
 
