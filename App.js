@@ -11,9 +11,7 @@ const AppNavigator = createStackNavigator(
       navigationOptions: {
         headerShown: false
       }
-    }
-  },
-  {
+    },
     'People': {
       screen: PeoplePage,
       navigationOptions: {
